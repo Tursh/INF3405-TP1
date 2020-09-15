@@ -2,19 +2,26 @@ package com.tremblar;
 
 import java.io.DataInputStream;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
-	
-	public static String SERVER_ADRESS = "127.0.0.1";
-	public static int SERVER_PORT = 5000;
 
 	private static Socket socket;
+	private static Scanner scan;
 	
 	public static void main(String[] args) throws Exception
 	{
-		socket = new Socket(SERVER_ADRESS, SERVER_PORT);
+		scan = new Scanner(System.in);
 		
-		System.out.format("The server is running on %s:%d%n", SERVER_ADRESS, SERVER_PORT);
+		System.out.print("Enter the server IP: ");
+		String serverAdress = scan.next();
+		
+		System.out.print("Enter the server port: ");
+		int serverPort = scan.nextInt();
+		
+		socket = new Socket(serverAdress, serverPort);
+		
+		System.out.format("The server is running on %s:%d%n", serverAdress, serverPort);
 		
 		DataInputStream in = new DataInputStream(socket.getInputStream());
 		
