@@ -1,12 +1,10 @@
 package com.tremblar;
 
-import java.io.DataInputStream;
-import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
 
-	private static Socket socket;
+	private static ServerConnection connection;
 	private static Scanner scan;
 	
 	public static void main(String[] args) throws Exception
@@ -19,15 +17,34 @@ public class Client {
 		System.out.print("Enter the server port: ");
 		int serverPort = scan.nextInt();
 		
-		socket = new Socket(serverAdress, serverPort);
+		connection = new ServerConnection(serverAdress, serverPort);
 		
-		System.out.format("The server is running on %s:%d%n", serverAdress, serverPort);
-		
-		DataInputStream in = new DataInputStream(socket.getInputStream());
-		
-		String helloMessageFromServer = in.readUTF();
-		System.out.println(helloMessageFromServer);
-		
-		socket.close();
+		do
+		{
+			String command = scan.nextLine();
+			
+			if(command.isEmpty())
+				continue;
+			
+			String[] words = command.split(" ");
+			
+			switch(words[0])
+            {
+			case "send":
+				connection.sendMessage(command.substring(4));
+				break;
+            case "login":
+            	//TODO: What to call to login
+            	break;
+            case "image":
+            	//TODO: What to call to load image
+            	break;
+            case "close":
+            	connection.close();
+            default:
+            	System.out.println("Unknown command");
+            }
+			
+		}while(connection.isConnected());
 	}
 }
