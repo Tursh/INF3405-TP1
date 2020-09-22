@@ -3,14 +3,29 @@ package com.tremblar;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class Server{
 	
 	public static String SERVER_ADRESS = "127.0.0.1";
 	public static int SERVER_PORT = 5000;
+	private static PasswordManager pm = new PasswordManager("passwords.json");
 	
 	private static ServerSocket listener;
 	private static int clientCount = 0;
+	
+	
+	private boolean clientLogin(String client, String pw, DataOutputStream out) throws IOException{
+		if(pm.clientOk(client, pw)){
+			return true;
+		}
+		else{
+			out.writeUTF("password error, please try again");
+			return false;
+		}
+		
+	}
 	
 	public static void main(String[] args) throws Exception{
 		
@@ -21,7 +36,8 @@ public class Server{
         listener = new ServerSocket();
         listener.setReuseAddress(true);
         InetAddress serverIP = InetAddress.getByName(SERVER_ADRESS);
-        
+        System.out.println("test client ok");
+        System.out.println(pm.clientOk("foo", "bar"));
         // "binding" a socket to an address and a port
         // only an address = unbound & cannot receive data
         // bound = can receive data and has a port number

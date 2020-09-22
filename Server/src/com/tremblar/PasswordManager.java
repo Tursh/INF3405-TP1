@@ -19,10 +19,13 @@ public class PasswordManager{
 		}catch(ParseException e){
 			// if it does not exist: create it
 			passwordFile = new JSONObject();
+			needsSaving = true;
 		}
 	}
 	
 	boolean clientOk(String clientName, String password){
+		if(!passwordFile.containsKey(clientName))
+			return false;
 		try{
 			String registeredPassword = (String)passwordFile.get(clientName);
 			if(registeredPassword != password){

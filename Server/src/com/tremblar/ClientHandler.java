@@ -20,6 +20,7 @@ public class ClientHandler extends Thread {
         try{
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             out.writeUTF("message from server to client " + clientNumber);
+            
         }catch(IOException e){
             System.out.println(e);
         }finally{
