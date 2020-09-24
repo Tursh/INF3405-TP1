@@ -11,13 +11,45 @@ public class Client {
 	{
 		scan = new Scanner(System.in);
 		
-		System.out.print("Enter the server IP: ");
-		String serverAdress = scan.next();
+		String serverAddress;
+		boolean isValidServerAddress = false;
+		do {
+			System.out.print("Enter the server IP: ");
+			serverAddress = scan.next();
+			String[] addressBytes = serverAddress.split("\\.");
+			if (addressBytes.length != 4) {
+				System.out.println("Server IP must have 4 bytes");
+				continue;
+			}
+			
+			isValidServerAddress = true;
+			for (int i = 0; i < addressBytes.length; i++) {
+				try {
+					isValidServerAddress &= Integer.parseInt(addressBytes[i]) >= 0;
+					isValidServerAddress &= Integer.parseInt(addressBytes[i]) <= 255;
+				} catch (NumberFormatException e) {
+					System.out.println("Not all entries were numbers - " + e);
+					isValidServerAddress = false;
+				}
+				if (!isValidServerAddress) {
+					System.out.println("Server IP can only contain numbers between 0 and 255");
+					break;
+				}
+			}
+			
+		} while (!isValidServerAddress);
 		
-		System.out.print("Enter the server port: ");
-		int serverPort = scan.nextInt();
+		int serverPort;
+		do {
+			System.out.print("Enter the server port: ");
+			serverPort = scan.nextInt();
+			
+			if (serverPort < 5000 || serverPort > 5050) {
+				System.out.println("Server port must be between 5000 and 5050");
+			}
+		} while (serverPort < 5000 || serverPort > 5050);
 		
-		connection = new ServerConnection(serverAdress, serverPort);
+		connection = new ServerConnection(serverAddress, serverPort);
 		
 		do
 		{
@@ -41,6 +73,7 @@ public class Client {
             	break;
             case "close":
             	connection.close();
+            	break;
             default:
             	System.out.println("Unknown command");
             }
