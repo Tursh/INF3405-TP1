@@ -6,12 +6,13 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
 public class ImageSender {
 
-	public void SendImage(Socket socket, String fileName) throws Exception
+	public static void SendImage(Socket socket, String fileName) throws Exception
 	{
 		System.out.println("Sending Image...");
 		
@@ -30,14 +31,22 @@ public class ImageSender {
 		DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 		
 		//Telling the server that we are sending an image
-		outputStream.writeUTF("SendingImage:" + fileName);
+		outputStream.writeUTF("image");
+		outputStream.flush();
 		
 		//Load the image to a byte stream
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();	
         ImageIO.write(image, "jpg", byteArrayOutputStream);
-        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-        outputStream.write(size);
-        outputStream.write(byteArrayOutputStream.toByteArray());
+        
+        int imageSize = byteArrayOutputStream.size();
+        byte[] imageArray = byteArrayOutputStream.toByteArray();
+        
+        for(int i = 0; i < imageSize / 100; i += 100)
+        {
+        	outputStream.write(i % 100);
+        	
+        	outputStream.write(Arrays.copyOfRange(imageArray, i, i + ((imageSize - i) < 100 ? imageSize - i : 100)));
+        }
         //Send
         outputStream.flush();
 		

@@ -10,7 +10,10 @@ import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 
 public class ImageReceiver {
-	public void receiveImage(Socket socket, String fileName) throws Exception {
+	
+	public static void receiveImage(Socket socket, String fileName) {
+		try
+		{
 		// From https://stackoverflow.com/questions/25086868/how-to-send-images-through-sockets-in-java
 		DataInputStream inputStream = new DataInputStream(socket.getInputStream());
 
@@ -25,5 +28,10 @@ public class ImageReceiver {
 
         System.out.println("Image " + fileName + " was received");
         ImageIO.write(image, "jpg", new File(fileName));
+		}
+		catch(Exception e)
+		{
+			System.out.println("Could not receive image. Error: " + e.getMessage());
+		}
 	}
 }

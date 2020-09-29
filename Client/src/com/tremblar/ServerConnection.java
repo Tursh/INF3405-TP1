@@ -51,9 +51,13 @@ public class ServerConnection {
 		}
 	}
 
-	public void sendImage()
+	public void sendImage(String fileName)
 	{
-		
+		try {
+			ImageSender.SendImage(socket, fileName);
+		} catch (Exception e) {
+			System.out.println("Could not send image! Error: " + e.getMessage());
+		}
 	}
 	
 	public void login(String clientName, String password)

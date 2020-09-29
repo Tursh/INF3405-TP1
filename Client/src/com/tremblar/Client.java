@@ -37,13 +37,13 @@ public class Client {
 			switch(words[0])
             {
 			case "send":
-				connection.sendMessage(command.substring(4));
+				connection.sendMessage(command.substring(5));
 				break;
             case "login":
             	//TODO: What to call to login
             	break;
             case "image":
-            	//TODO: What to call to load image
+            	connection.sendImage(command.substring(6));
             	break;
             case "close":
             	connection.close();

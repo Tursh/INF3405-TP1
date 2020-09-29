@@ -63,11 +63,12 @@ public class ClientHandler extends Thread {
             	//TODO: What to call to login
             	break;
             case "image":
-            	//TODO: What to call to load image
+            	ImageReceiver.receiveImage(socket, "image.jpg");
             	break;
             case "close":
             	running = false;
             	response = "connection closing";
+            	break;
             default:
             	response = "unknown command";
             }
