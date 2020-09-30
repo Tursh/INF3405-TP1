@@ -27,7 +27,14 @@ public class Client {
 		
 		do
 		{
-			String command = scan.nextLine();
+        	System.out.print("Enter command: ");
+        	
+        	String command;
+        	
+        	do
+        	{
+			 command = scan.nextLine();
+        	} while (command.isEmpty());
 			
 			if(command.isEmpty())
 				continue;
@@ -48,8 +55,19 @@ public class Client {
             case "close":
             	connection.close();
             	break;
+            case "help":
+            	System.out.println(
+            			  "Command list:\n"
+            			+ "- 'login'	- Login to your account 		- usage: login <Username> <Password>\n"
+            			+ "- 'register	- Create a new account			- usage: register <Username> <Password>\n"
+            			+ "These commands needs you to be logged in:\n"
+            			+ "- 'send'		- Send message to server		- usage: send <msg>\n"
+            			+ "- 'image'	- Send image to server			- usage: image <Image Filename>\n"
+            			+ "- 'close'	- Close connection to server"
+            			);
+            	break;
             default:
-            	System.out.println("Unknown command");
+            	System.out.println("Unknown command. Write 'help' for command list");
             }
 			
 		}while(connection.isConnected());

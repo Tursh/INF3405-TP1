@@ -48,22 +48,31 @@ public class ClientHandler extends Thread {
     public void run(){
         do
         {
-            String msg = receive();
+        	//Receive message
+        	String msg;
+        	do
+        	{
+        		msg = receive();
+        	}while(msg == null);
+        	
             String[] words = msg.split(" ");
             
             String response = "";
             
             switch(words[0])
             {
+            case "login":
+            	//TODO: What to call to login
+            	break;
+            case "register":
+            	//TODO: What to call to register
+            	break;
             case "send":
             	System.out.println("Message received from client " + clientNumber + ": " + msg.substring(5));
             	response = "message received";
             	break;
-            case "login":
-            	//TODO: What to call to login
-            	break;
             case "image":
-            	ImageReceiver.receiveImage(socket, "image.jpg");
+            	ImageReceiver.receiveImage(socket, words[1]);
             	break;
             case "close":
             	running = false;

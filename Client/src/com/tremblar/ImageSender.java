@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 
 public class ImageSender {
 
+	public static final int PACKET_SIZE = 100;
+	
 	public static void SendImage(Socket socket, String fileName) throws Exception
 	{
 		System.out.println("Sending Image...");
@@ -31,25 +33,31 @@ public class ImageSender {
 		DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 		
 		//Telling the server that we are sending an image
-		outputStream.writeUTF("image");
+		outputStream.writeUTF("image " + fileName);
 		outputStream.flush();
 		
-		//Load the image to a byte stream
+		//Load the image to a byte array
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();	
         ImageIO.write(image, "jpg", byteArrayOutputStream);
-        
-        int imageSize = byteArrayOutputStream.size();
         byte[] imageArray = byteArrayOutputStream.toByteArray();
-        
-        for(int i = 0; i < imageSize / 100; i += 100)
+       
+        //Get image size
+        int imageSize = byteArrayOutputStream.size();
+
+        //Send in 100 bytes packets
+        for(int i = 0; i < imageSize; i += PACKET_SIZE)
         {
-        	outputStream.write(i % 100);
+        	//Get and send packet size
+        	int packetSize = imageSize - i < PACKET_SIZE ? imageSize - i : PACKET_SIZE;
+        	byte[] size = ByteBuffer.allocate(4).putInt(packetSize).array();
+        	outputStream.write(size);
         	
-        	outputStream.write(Arrays.copyOfRange(imageArray, i, i + ((imageSize - i) < 100 ? imageSize - i : 100)));
+        	outputStream.write(Arrays.copyOfRange(imageArray, i, i + packetSize));
+            outputStream.flush();
         }
-        //Send
-        outputStream.flush();
-		
+        outputStream.writeUTF("Done Sending");
+        
+        System.out.println("Image sent succesfully!");
 	}
 	
 }
