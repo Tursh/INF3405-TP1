@@ -47,6 +47,9 @@ public class ImageSender {
         //Send in 100 bytes packets
         for(int i = 0; i < imageSize; i += PACKET_SIZE)
         {
+        	//Tell server that a chunk is incoming
+        	outputStream.writeUTF("Chunk incoming");
+        	outputStream.flush();
         	//Get and send packet size
         	int packetSize = imageSize - i < PACKET_SIZE ? imageSize - i : PACKET_SIZE;
         	byte[] size = ByteBuffer.allocate(4).putInt(packetSize).array();
@@ -55,7 +58,8 @@ public class ImageSender {
         	outputStream.write(Arrays.copyOfRange(imageArray, i, i + packetSize));
             outputStream.flush();
         }
-        outputStream.writeUTF("Done Sending");
+        outputStream.writeUTF("Done sending");
+        outputStream.flush();
         
         System.out.println("Image sent succesfully!");
 	}
