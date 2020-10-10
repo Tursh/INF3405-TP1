@@ -7,6 +7,10 @@ import java.io.File;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 import javax.imageio.ImageIO;
 
@@ -48,5 +52,14 @@ public class ImageReceiver {
 		{
 			System.out.println("Could not receive image. Error: " + e.getMessage());
 		}
+	}
+	
+	public static void printImageInfo(Socket socket, String fileName) {
+		String clientIpAddressAndPort = socket.getRemoteSocketAddress().toString().replace("/","");
+		LocalDate date = LocalDate.now();
+		String time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME);
+		
+		System.out.println("[Username - " + clientIpAddressAndPort + " - " + date + "@" + time
+				+ "] : Image " + fileName + " reçue pour traitement.");
 	}
 }

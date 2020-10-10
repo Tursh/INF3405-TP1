@@ -72,6 +72,7 @@ public class ClientHandler extends Thread {
             	response = "message received";
             	break;
             case "image":
+            	ImageReceiver.printImageInfo(socket, words[1]);
             	ImageReceiver.receiveImage(socket, words[1]);
             	break;
             case "close":
