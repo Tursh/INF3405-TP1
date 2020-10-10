@@ -37,6 +37,11 @@ public class ImageReceiver {
 			BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageArray));
 			
 			System.out.println("Image " + fileName + " was received");
+			
+			// Apply filter
+			image = Sobel.process(image);
+			
+			// Save filtered image
 			ImageIO.write(image, "jpg", new File(fileName));
 		}
 		catch(Exception e)
