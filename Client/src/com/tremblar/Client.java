@@ -47,13 +47,16 @@ public class Client {
 				connection.sendMessage(command.substring(5));
 				break;
             case "login":
-            	//TODO: What to call to login
+            	connection.sendLogin(words[1], words[2]);
             	break;
             case "image":
             	connection.sendImage(command.substring(6));
             	break;
             case "close":
             	connection.close();
+            	break;
+            case "register":
+            	connection.sendRegister(words[0], words[1]);
             	break;
             case "help":
             	System.out.println(

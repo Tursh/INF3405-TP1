@@ -3,6 +3,7 @@ package com.tremblar;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ServerConnection {
@@ -42,15 +43,40 @@ public class ServerConnection {
 	{
 		try {
 			out.writeUTF("send " + msg);
-		if(!in.readUTF().matches("message received"))
-		{
-			System.out.println("An error occured while sending this message: " + msg);
-		}
+			String instream = in.readUTF();
+			System.out.println(instream);
+			if(!instream.matches("message received")){
+				System.out.println("An error occured while sending this message: " + msg);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public void sendLogin(String username, String password) {
+		try {
+			out.writeUTF("login " + username + " " + password);
+			String instream = in.readUTF();
+			System.out.println(instream);
 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void sendRegister(String username, String password) {
+		try {
+			out.writeUTF("register " + username + " " + password);
+			String instream = in.readUTF();
+			System.out.println(instream);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public void sendImage(String fileName)
 	{
 		try {
@@ -58,11 +84,6 @@ public class ServerConnection {
 		} catch (Exception e) {
 			System.out.println("Could not send image! Error: " + e.getMessage());
 		}
-	}
-	
-	public void login(String clientName, String password)
-	{
-		
 	}
 	
 	public void close()

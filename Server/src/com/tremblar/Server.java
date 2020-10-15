@@ -10,22 +10,10 @@ public class Server{
 	
 	public static String SERVER_ADRESS = "127.0.0.1";
 	public static int SERVER_PORT = 5000;
-	private static PasswordManager pm = new PasswordManager("passwords.json");
+	private static PasswordManager pm;
 	
 	private static ServerSocket listener;
 	private static int clientCount = 0;
-	
-	
-	private boolean clientLogin(String client, String pw, DataOutputStream out) throws IOException{
-		if(pm.clientOk(client, pw)){
-			return true;
-		}
-		else{
-			out.writeUTF("password error, please try again");
-			return false;
-		}
-		
-	}
 	
 	public static void main(String[] args) throws Exception{
 		
@@ -33,11 +21,12 @@ public class Server{
         Enabling SO_REUSEADDR prior to binding the socket using bind(SocketAddress)
         allows the socket to be bound even though a previous connection is in a timeout state.
         */
+		pm = new PasswordManager("passwords.json");
         listener = new ServerSocket();
         listener.setReuseAddress(true);
         InetAddress serverIP = InetAddress.getByName(SERVER_ADRESS);
         System.out.println("test client ok");
-        System.out.println(pm.clientOk("foo", "bar"));
+        System.out.println(pm.clientOk("FOO", "BAR"));
         // "binding" a socket to an address and a port
         // only an address = unbound & cannot receive data
         // bound = can receive data and has a port number
@@ -50,7 +39,7 @@ public class Server{
             while(true){
                 // note : connect is blocking (wait for the client to connect)
                 System.out.println("waiting for connection ... ");
-                new ClientHandler(listener.accept(), clientCount++).start();
+                new ClientHandler(listener.accept(), clientCount++, pm).start();
             }
         }
         finally{

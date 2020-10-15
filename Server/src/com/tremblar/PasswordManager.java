@@ -3,6 +3,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser; 
 import org.json.simple.parser.ParseException;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -12,26 +14,24 @@ public class PasswordManager{
 	private static JSONParser jsonReader = new JSONParser();
 	// set this to true if a client has been added or removed
 	public boolean needsSaving = false;
-	PasswordManager(String filepath){
+	PasswordManager(String filepath) throws FileNotFoundException, IOException{
 		// if the JSON file does exist, read it
 		try{
-			passwordFile = (JSONObject)jsonReader.parse(filepath);
+			passwordFile = (JSONObject)jsonReader.parse(new FileReader(filepath));
 		}catch(ParseException e){
-			// if it does not exist: create it
+			System.out.println(e);
 			passwordFile = new JSONObject();
 			needsSaving = true;
 		}
 	}
 	
 	boolean clientOk(String clientName, String password){
-		if(!passwordFile.containsKey(clientName))
+		if(!passwordFile.containsKey(clientName)) {
 			return false;
+		}
 		try{
 			String registeredPassword = (String)passwordFile.get(clientName);
-			if(registeredPassword != password){
-				return false;
-			}
-			return true;
+			return registeredPassword.equals(password);
 		}catch(Exception e){
 			// get throws an exception if client is not found
 			return false;
@@ -39,10 +39,15 @@ public class PasswordManager{
 	}
 	
 	@SuppressWarnings("unchecked")
-	void insertClient(String clientName, String password){
-		if(!passwordFile.containsKey(clientName))
+	boolean insertClient(String clientName, String password){
+		if(!passwordFile.containsKey(clientName)) {
 			passwordFile.put(clientName, password);
-		needsSaving = true;
+			needsSaving = true;
+			return true;
+		}else {
+			return false;
+		}
+		
 	}
 	
 	void removeClient(String clientName){
