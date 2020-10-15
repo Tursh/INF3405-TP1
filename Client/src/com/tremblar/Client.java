@@ -51,12 +51,13 @@ public class Client {
             	break;
             case "image":
             	connection.sendImage(command.substring(6));
+            	connection.receiveImage("filtered_" + command.substring(6));
             	break;
             case "close":
             	connection.close();
             	break;
             case "register":
-            	connection.sendRegister(words[0], words[1]);
+            	connection.sendRegister(words[1], words[2]);
             	break;
             case "help":
             	System.out.println(

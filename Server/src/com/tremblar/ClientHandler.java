@@ -69,11 +69,13 @@ public class ClientHandler extends Thread {
         	String msg;
         	do{
         		msg = receive();
-        	}while(msg == null && running);
+        	}while(msg == null);
         	System.out.println(msg);
             String[] words = null;
             if (msg != null) {
-            	msg.split(" ");
+            	words = msg.split(" ");
+            }else {
+            	throw  new NullPointerException("message cannot be null");
             }
             
             String response = "";
@@ -109,6 +111,12 @@ public class ClientHandler extends Thread {
             case "image":
             	ImageReceiver.printImageInfo(socket, words[1]);
             	ImageReceiver.receiveImage(socket, words[1]);
+            	try {
+					ImageSender.SendImage(socket, words[1]);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             	break;
             case "close":
             	running = false;

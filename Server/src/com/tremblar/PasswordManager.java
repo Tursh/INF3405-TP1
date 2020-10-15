@@ -40,6 +40,9 @@ public class PasswordManager{
 	
 	@SuppressWarnings("unchecked")
 	boolean insertClient(String clientName, String password){
+		System.out.println(clientName);
+		System.out.println(passwordFile.containsKey(clientName));
+		
 		if(!passwordFile.containsKey(clientName)) {
 			passwordFile.put(clientName, password);
 			needsSaving = true;
