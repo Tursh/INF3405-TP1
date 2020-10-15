@@ -74,6 +74,12 @@ public class ClientHandler extends Thread {
             case "image":
             	ImageReceiver.printImageInfo(socket, words[1]);
             	ImageReceiver.receiveImage(socket, words[1]);
+            	try {
+					ImageSender.SendImage(socket, words[1]);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             	break;
             case "close":
             	running = false;

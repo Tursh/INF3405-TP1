@@ -51,6 +51,7 @@ public class Client {
             	break;
             case "image":
             	connection.sendImage(command.substring(6));
+            	connection.receiveImage("filtered_" + command.substring(6));
             	break;
             case "close":
             	connection.close();

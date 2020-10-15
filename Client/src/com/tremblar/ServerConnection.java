@@ -60,6 +60,15 @@ public class ServerConnection {
 		}
 	}
 	
+	public void receiveImage(String fileName)
+	{
+		try {
+			ImageReceiver.receiveImage(socket, fileName);
+		} catch (Exception e) {
+			System.out.println("Could not receive image! Error: " + e.getMessage());
+		}
+	}
+	
 	public void login(String clientName, String password)
 	{
 		
