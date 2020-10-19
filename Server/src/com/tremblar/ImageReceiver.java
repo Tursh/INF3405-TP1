@@ -54,12 +54,12 @@ public class ImageReceiver {
 		}
 	}
 	
-	public static void printImageInfo(Socket socket, String fileName) {
+	public static void printImageInfo(String clientName, Socket socket, String fileName) {
 		String clientIpAddressAndPort = socket.getRemoteSocketAddress().toString().replace("/","");
 		LocalDate date = LocalDate.now();
 		String time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_TIME);
 		
-		System.out.println("[Username - " + clientIpAddressAndPort + " - " + date + "@" + time
+		System.out.println("[" + clientName + " - " + clientIpAddressAndPort + " - " + date + "@" + time
 				+ "] : Image " + fileName + " reçue pour traitement.");
 	}
 }

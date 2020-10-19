@@ -3,36 +3,24 @@ package com.tremblar;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 
 public class ClientHandler extends Thread {
 	private Socket socket; // the client socket
     private int clientNumber;
+    private String clientName;
     private boolean running;
   
-    public static PasswordManager manager;
-
-    private boolean clientLogin(String client, String pw) throws IOException{
-		if(manager.clientOk(client, pw)){
-			System.out.println("login success. Welcome back!");
-			return true;
-		}
-		else{
-			System.out.println("there was an error with the username or the password, please try again");
-			return false;
-		}
-	}
+    public PasswordManager pm;
     
     public ClientHandler(Socket socket, int clientNumber, PasswordManager manager) throws IOException{
     	running = true;
         this.socket = socket;
         this.clientNumber = clientNumber;
-        ClientHandler.manager = manager;
+        pm = manager;
         System.out.println("new connection with client number " + this.clientNumber +
             " at " + socket);
         send("Connection Established");
-        this.run();
     }
     
     private String receive()
@@ -63,60 +51,80 @@ public class ClientHandler extends Thread {
     }
 
     public void run(){
-        do
+        while(running)
         {
         	//Receive message
         	String msg;
         	do{
         		msg = receive();
-        	}while(msg == null);
-        	System.out.println(msg);
+        	}while(msg == null && running);
+        	
             String[] words = null;
-            if (msg != null) {
-            	words = msg.split(" ");
-            }else {
-            	throw  new NullPointerException("message cannot be null");
-            }
+            words = msg.split(" ");
             
             String response = "";
-            System.out.println(msg);
+
             
             switch(words[0])
             {
-            case "login":{
-            	try {
-					System.out.println("loggin in ... ");
-            		if(this.clientLogin(words[1], words[2])) {
-            			response = "login success. welcome back!";
-            		}else {
-            			response = "error occured with password or username. please try again "
-            					+ "or register";
-            		}
-            		
-				} catch (IOException e) {/*nothing to do here*/}
-            	break;
-            }
-            case "register":
-            	boolean success = ClientHandler.manager.insertClient(words[1], words[0]);
-            	if (success) {
-            		response = "register successful. please login";
-            	}else {
-            		response = "username already exits. pick another one";
+            case "login":
+            	//Check if already logged in
+            	if(clientName != null)
+            	{
+            		response = "You are already logged in as " + clientName;
+            		break;
             	}
+            	
+            	//Check for the syntax
+            	if(words.length != 3)
+				{
+					response = "You incorrectly tried to login. Type 'help' to see how";
+					break;
+				}
+				
+				System.out.println(words[1] + " is logging in!");
+				
+				//Does the client exist
+				if(pm.clientOk(words[1], words[2])) {
+					response = "Login success. Welcome back!";
+					System.out.println(words[1] + " is logged in succesfully!");
+				}
+				//If not register the client
+				else { 
+					System.out.println(words[1] + " is not registered.\nNow registering " + words[1] + "...");
+					if(pm.insertClient(words[1], words[2]))
+					{
+						response = "Your account is now registered. Welcome " + words[1];
+						System.out.println(words[1] + " is now registered and logged in!");
+					}
+				}
+				
+				clientName = words[1];
+				
             	break;
             case "send":
-            	System.out.println("Message received from client " + clientNumber + ": " + msg.substring(5));
-            	response = "message received";
+            	if(clientName != null)
+            	{
+            		System.out.println(clientName + ": " + msg.substring(5));
+            		response = "message received";
+            	}
+            	else
+            		response = "You need to be logged in to send messages. Type help to see how";
             	break;
             case "image":
-            	ImageReceiver.printImageInfo(socket, words[1]);
-            	ImageReceiver.receiveImage(socket, words[1]);
-            	try {
-					ImageSender.SendImage(socket, words[1]);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+            	if(clientName != null)
+            	{
+            		ImageReceiver.printImageInfo(clientName, socket, words[1]);
+            		ImageReceiver.receiveImage(socket, words[1]);
+            		try {
+            			ImageSender.SendImage(socket, words[1]);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            	}
+            	else
+            		response = "You need to be logged in to send images. Type help to see how";
             	break;
             case "close":
             	running = false;
@@ -128,7 +136,7 @@ public class ClientHandler extends Thread {
             
             send(response);
             
-        }while(running);
+        }
       
         stopSocket();
     }
@@ -136,9 +144,9 @@ public class ClientHandler extends Thread {
     private void stopSocket()
     {
     	try{
-            socket.close();
+    		socket.close();
         }catch(IOException e){
-            System.out.println(e);
+        	System.out.println(e);
         }
 
         System.out.println("Connection closed with client " + clientNumber);

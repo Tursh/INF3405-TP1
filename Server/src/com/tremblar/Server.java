@@ -3,8 +3,6 @@ package com.tremblar;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 public class Server{
 	
@@ -21,12 +19,10 @@ public class Server{
         Enabling SO_REUSEADDR prior to binding the socket using bind(SocketAddress)
         allows the socket to be bound even though a previous connection is in a timeout state.
         */
-		pm = new PasswordManager("passwords.json");
+		pm = new PasswordManager("accounts.json");
         listener = new ServerSocket();
         listener.setReuseAddress(true);
         InetAddress serverIP = InetAddress.getByName(SERVER_ADRESS);
-        System.out.println("test client ok");
-        System.out.println(pm.clientOk("FOO", "BAR"));
         // "binding" a socket to an address and a port
         // only an address = unbound & cannot receive data
         // bound = can receive data and has a port number

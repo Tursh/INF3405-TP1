@@ -10,14 +10,18 @@ import java.io.IOException;
 
 
 public class PasswordManager{
-	private static JSONObject passwordFile;
-	private static JSONParser jsonReader = new JSONParser();
+	private JSONObject passwordFile;
+	private JSONParser jsonReader = new JSONParser();
+	private String filePath;
+	
 	// set this to true if a client has been added or removed
 	public boolean needsSaving = false;
-	PasswordManager(String filepath) throws FileNotFoundException, IOException{
+	
+	PasswordManager(String filePath) throws FileNotFoundException, IOException{
 		// if the JSON file does exist, read it
+		this.filePath = filePath;
 		try{
-			passwordFile = (JSONObject)jsonReader.parse(new FileReader(filepath));
+			passwordFile = (JSONObject)jsonReader.parse(new FileReader(filePath));
 		}catch(ParseException e){
 			System.out.println(e);
 			passwordFile = new JSONObject();
@@ -40,28 +44,32 @@ public class PasswordManager{
 	
 	@SuppressWarnings("unchecked")
 	boolean insertClient(String clientName, String password){
-		System.out.println(clientName);
-		System.out.println(passwordFile.containsKey(clientName));
 		
 		if(!passwordFile.containsKey(clientName)) {
 			passwordFile.put(clientName, password);
-			needsSaving = true;
+			saveFile();
 			return true;
-		}else {
-			return false;
 		}
+			return false;
 		
 	}
 	
 	void removeClient(String clientName){
 		if(passwordFile.containsKey(clientName))
+		{
 			passwordFile.remove(clientName);
-		needsSaving = true;
+			saveFile();
+		}
 	}
 	
-	void saveFile(String filepath) throws IOException{
-		FileWriter file = new FileWriter(filepath);
-        file.write(passwordFile.toJSONString());
-        file.close();
+	void saveFile() {
+        try {
+    		FileWriter file = new FileWriter(filePath);
+			file.write(passwordFile.toJSONString());
+	        file.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

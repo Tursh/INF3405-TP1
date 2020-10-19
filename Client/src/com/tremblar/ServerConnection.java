@@ -44,9 +44,6 @@ public class ServerConnection {
 			out.writeUTF("send " + msg);
 			String instream = in.readUTF();
 			System.out.println(instream);
-			if(!instream.matches("message received")){
-				System.out.println("An error occured while sending this message: " + msg);
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
