@@ -20,6 +20,11 @@ public class Client {
 		int serverPort;
 		do {
 			System.out.print("Enter the server port: ");
+			while(!scan.hasNextInt()) 
+			{
+				scan.next();
+				System.out.print("Enter the server port: ");
+			}
 			serverPort = scan.nextInt();
 		} while (!EntryValidator.verifyPort(serverPort));
 		

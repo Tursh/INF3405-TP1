@@ -82,12 +82,18 @@ public class ClientHandler extends Thread {
 					break;
 				}
 				
-				System.out.println(words[1] + " is logging in!");
+				System.out.println(words[1] + " is logging in...");
 				
 				//Does the client exist
 				if(pm.clientOk(words[1], words[2])) {
 					response = "Login success. Welcome back!";
 					System.out.println(words[1] + " is logged in succesfully!");
+				}
+				if(pm.doesClientExist(words[1]))
+				{
+					response = "Wrong password for " + words[1];
+					System.out.println("Wrong password for " + words[1]);
+					break;
 				}
 				//If not register the client
 				else { 

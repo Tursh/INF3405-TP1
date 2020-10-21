@@ -30,7 +30,7 @@ public class PasswordManager{
 	}
 	
 	boolean clientOk(String clientName, String password){
-		if(!passwordFile.containsKey(clientName)) {
+		if(!doesClientExist(clientName)) {
 			return false;
 		}
 		try{
@@ -40,6 +40,11 @@ public class PasswordManager{
 			// get throws an exception if client is not found
 			return false;
 		}
+	}
+	
+	boolean doesClientExist(String clientName)
+	{
+		return passwordFile.containsKey(clientName);
 	}
 	
 	@SuppressWarnings("unchecked")
